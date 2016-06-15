@@ -43,7 +43,7 @@ class EditablesHelperTest < ActionView::TestCase
 		editable = editable_content do
 			"text test"
 		end
-		assert_equal "text test", editable
+		assert_no_match /data-mercury/, editable
 	end
 
 	test "should render editable content to alowed logged users" do
@@ -75,4 +75,27 @@ class EditablesHelperTest < ActionView::TestCase
 	test "should render editable image to allowed users" do
 		assert_match /data-mercury="image"/, editable_image_tag("rails.png", :size => "50x50")
 	end
+	
+	test "should render editable content with h1 tag" do
+		editable = editable_content :h1 do
+			"text test"
+		end
+		assert_match /<h1.*data-mercury.*>/, editable
+		editable = editable_content 'text', :h1 do
+			"text test"
+		end
+		assert_match /<h1.*data-mercury.*>/, editable
+	end
+
+	test "should render editable content with h1 tag and title class" do
+		editable = editable_content :h1, class: "title" do
+			"text test"
+		end
+		assert_match /<h1.*class=\"title\".*data-mercury.*>/, editable
+		editable = editable_content 'text', :h1, class: "title" do
+			"text test"
+		end
+		assert_match /<h1.*class=\"title\".*data-mercury.*>/, editable
+	end
+
 end

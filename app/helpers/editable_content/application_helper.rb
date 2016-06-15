@@ -1,16 +1,31 @@
 module EditableContent::ApplicationHelper
 	include Mercury::Authentication
 
-	def editable_content(name = nil, &block)
+	def editable_content(name = nil, wrapper = :div, args = {}, &block)
 		contents = capture(&block)
+		if wrapper.is_a? Hash
+			args = args.merge(wrapper)
+			wrapper = :div
+		end
+		if name.is_a? Symbol
+			wrapper = name
+			name = nil
+		else
+			if name.is_a? Hash
+				args = args.merge(name)
+				name = nil
+			end
+		end
 		key = Digest::MD5.hexdigest(name ? name : contents)
 		e = ::EditableContent::Editable.find_by_key(key) || ::EditableContent::Editable.create(:key => key, :text => contents)
 		contents = e.text if !e.text.empty?
 
 		if can_edit?
-			return content_tag(:div, contents.html_safe, {:id => key, 'data-mercury' => 'full'}) 
+			options = {'data-key' => key, 'data-mercury' => 'full'}
+			options = args.merge(options)
+			return content_tag(wrapper, contents.html_safe, options) 
 		else
-			return contents.html_safe
+			return content_tag(wrapper, contents.html_safe, args) 
 		end
 	end
 

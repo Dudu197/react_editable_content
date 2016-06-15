@@ -216,7 +216,7 @@ window.Mercury = {
     // it if you want to dynamically set the type based on inspection of the region.
     regions: {
       attribute: 'data-mercury',
-      identifier: 'id',
+      identifier: 'data-key',
       dataAttributes: []
       // determineType: function(region){},
       },
